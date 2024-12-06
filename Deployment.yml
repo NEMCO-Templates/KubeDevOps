@@ -1,0 +1,20 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+   name: karammajdi
+spec:
+   replicas: 2
+   selector:      
+    matchLabels:
+     app: karammajdi
+   template:
+      metadata:
+        labels:
+          app: karammajdi
+      spec:
+       containers:
+        - name: karammajdi
+          image: karammajdi/pipeline-demo
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 80
