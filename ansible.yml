@@ -7,13 +7,13 @@
 
     - name: Delete old deployment
       ansible.builtin.command:
-        cmd: kubectl delete -f /home/ubuntu/Deployment.yml
+        cmd: kubectl delete -f /home/ubuntu/Deployment.yml --ignore-not-found
       environment:
         KUBECONFIG: "/home/ubuntu/.kube/config"
 
     - name: Delete old service
       ansible.builtin.command:
-        cmd: kubectl delete -f /home/ubuntu/Service.yml
+        cmd: kubectl delete -f /home/ubuntu/Service.yml --ignore-not-found
       environment:
         KUBECONFIG: "/home/ubuntu/.kube/config"
 
