@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="{% static 'images/coding2.png' %}" type="image/x-icon" />
+    <link rel="stylesheet" href="{% static 'styles/style.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" 
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+    <title>Palaver</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+  </head>
+
+  <body>
+    
+    {% if not is_register_page %}
+      {% include 'navbar.html' %}
+    {% endif %}
+
+    <style>
+      .alert-messages {
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: 9999;
+      }
+      
+      .alert {
+        padding: 8px;
+        margin: 8px;
+        border-radius: 3px;
+        font-size: 11px;
+        font-weight: bold;
+        color: #fff;
+      }
+      
+      .alert-success {
+        background-color: #28a745;
+      }
+      
+      .alert-warning {
+        background-color: #ffc107;
+      }
+      
+      .alert-danger {
+        background-color: #dc3545;
+      }
+      
+      .alert-messages {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 17%;
+        z-index: 9999;
+      }
+      
+      .alert {
+        padding: 9px 15px;
+        margin-bottom: 8px;
+        border-radius: 3px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #000;
+        background-color: #fff;
+        text-align: center;
+        border-left: #28a745 4px solid;
+      }
+    </style>
+
+    {% if messages %}
+  <div class="alert-messages">
+    {% for message in messages %}
+      <div class="alert{% if message.tags %} alert-{{ message.tags }}{% endif %}" role="alert">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+  
+    {% block content %}
+
+    
+    {% endblock %}
+    
+    <script src="{% static 'js/script.js' %}"></script>
+  </body>
+  <script type="text/javascript">
+    $(document).on('submit','#post-form',function(e){
+      e.preventDefault();
+  
+      $.ajax({
+        type:'POST',
+        url:'/send',
+        data:{
+            room_id:$('#room_id').val(),
+            body:$('#body').val(),
+          csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function(data){
+           // alert(data)
+        }
+      });
+      document.getElementById('body').value = ''
+    });
+  </script>
+</html>

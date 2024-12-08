@@ -1,24 +1,27 @@
-# Start from a base AlmaLinux image
-FROM almalinux:latest
+# Use the official Python image as the base
+FROM python:3.10-slim
 
-# Update system and install Apache and necessary tools
-RUN dnf update -y && \
-    dnf install -y httpd zip unzip && \
-    dnf clean all
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-# Add a valid zip file from a reliable source
-ADD https://github.com/startbootstrap/startbootstrap-freelancer/archive/refs/heads/master.zip /var/www/html/
+# Set the working directory inside the container
+WORKDIR /app
 
-# Set the working directory
-WORKDIR /var/www/html/
+# Copy the project files into the container
+COPY . .
 
-# Unzip and prepare the web files
-RUN unzip master.zip && \
-    cp -rvf startbootstrap-freelancer-master/* . && \
-    rm -rf startbootstrap-freelancer-master master.zip
-    
-# Set Apache to run in the foreground
-CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    libpq-dev gcc && \
+    rm -rf /var/lib/apt/lists/*
 
-# Expose ports
-EXPOSE 80 22
+# Install Python dependencies
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Expose the port that the Django app runs on
+EXPOSE 8000
+
+# Command to run the application
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "studyPlat.wsgi:application"]

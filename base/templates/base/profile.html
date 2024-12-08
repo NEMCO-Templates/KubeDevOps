@@ -1,0 +1,248 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<style>
+  .btn--followers {
+    background-color: #63657e;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin-right: 10px;
+  }
+  
+  .btn--following {
+    background-color: #6c757d;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin-right: 10px;
+  }
+  
+  .count {
+    margin-left: 10px;
+    font-size: 10px;
+    font-weight: bold;
+  }
+  
+</style>
+
+
+  <main class="profile-page layout layout--3">
+    <div class="container">
+      <!-- Topics Start -->
+      {% include 'base/topics_component.html' %}
+      <!-- Topics End -->
+
+      <!-- Room List Start -->
+      <div class="roomList">
+        <div class="profile">
+          <div class="profile__avatar">
+            <div class="avatar avatar--large active">
+              <img src="{{ user.avatar.url }}" />
+            </div>
+          </div>
+          <div class="profile__info">
+            <h3>{{ user.username }}</h3>
+            <p>@{{ user.username }}</p>
+            {% if user == request.user %}
+              <a href="{% url 'update-user' %}" class="btn btn--main btn--pill">Edit Profile</a>
+              <br>    
+            {% endif %}
+            <div style="margin:20px;">
+              <a href="#" class="btn btn--main btn--pill btn--followers">Followers <span class="count">{{ followers_count }}</span></a>
+              <a href="#" class="btn btn--main btn--pill btn--following">Following <span class="count">{{ following_count }}</span></a>
+            </div>
+            {% if user != request.user %}
+              {% if request.user in user.followingUsersModel.all %}
+                <a href="{% url 'unfollow_user' user.id %}" class="btn btn--main btn--pill">Unfollow</a>
+              {% else %}
+                <a href="{% url 'follow_user' user.id %}" class="btn btn--main btn--pill">Follow</a>
+              {% endif %}
+            {% endif %}
+
+
+            <!-- Modal for followers -->
+            <div id="followers-modal" class="modal">
+              <div class="modal-content">
+                <h2>Followers</h2>
+                <span class="close">&times;</span>
+                <ul id="followers-list">
+                  {% for follower in followers %}
+                  <li class="user-item">
+                    <img src="{{ follower.user.avatar.url }}" alt="{{ follower.user.username }}'s profile image">
+                    <a href="{% url 'user-profile' follower.user.id %}">{{ follower.user.username }}</a>
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+
+            <!-- Modal for following -->
+            <div id="following-modal" class="modal">
+              <div class="modal-content">
+                <span><h2>Following</h2>
+                <span class="close">&times;</span></span>
+                <ul id="following-list">
+                  {% for followed_user in following %}
+                  <li class="user-item">
+                    <img src="{{ followed_user.user.avatar.url }}" alt="{{ followed_user.user.username }}'s profile image">
+                    <a href="{% url 'user-profile' followed_user.user.id %}">{{ followed_user.user.username }}</a>
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+
+            <script>
+                          // Get the modal elements
+            var followersModal = document.getElementById("followers-modal");
+            var followingModal = document.getElementById("following-modal");
+
+            // Get the button elements
+            var followersBtn = document.querySelector(".btn--followers");
+            var followingBtn = document.querySelector(".btn--following");
+
+            // Get the <span> elements that close the modal
+            var followersCloseBtn = document.querySelector("#followers-modal .close");
+            var followingCloseBtn = document.querySelector("#following-modal .close");
+
+            // Get the <ul> elements that contain the followers and following lists
+            var followersList = document.getElementById("followers-list");
+            var followingList = document.getElementById("following-list");
+
+            // Add event listeners to the buttons to show the modals
+            followersBtn.addEventListener("click", function() {
+              followersModal.style.display = "block";
+            });
+
+            followingBtn.addEventListener("click", function() {
+              followingModal.style.display = "block";
+            });
+
+            // Add event listeners to the <span> elements to close the modals
+            followersCloseBtn.addEventListener("click", function() {
+              followersModal.style.display = "none";
+            });
+
+            followingCloseBtn.addEventListener("click", function() {
+              followingModal.style.display = "none";
+            });
+
+            </script>
+
+
+            <style>
+              /* Modal styles */
+              .modal {
+                display: none; /* Hidden by default */
+                position: fixed; /* Stay in place */
+                z-index: 9999; /* Sit on top */
+                left: 0;
+                top: 0;
+                width: 100%; /* Full width */
+                height: 100%; /* Full height */
+                overflow: auto; /* Enable scroll if needed */
+                background-color: rgba(0, 0, 0, 0.7); /* Black w/ opacity */
+              }
+
+              .modal-content {
+                background-color: #3f4156;
+                margin: 10% auto; /* 10% from the top and centered */
+                padding: 20px;
+                border-radius: 12px;
+                box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.2);
+                width: 90%; /* Could be more or less, depending on screen size */
+                max-width: 500px;
+                max-height: 80%;
+                overflow: auto;
+                position: relative;
+              }
+
+              .close {
+                position: absolute;
+                top: 25px;
+                right: 10px;
+                font-size: 24px;
+                font-weight: bold;
+                color: #999;
+                cursor: pointer;
+                transform: translate(-50%, -50%);
+                background-color: #fff;
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.2);
+              }
+
+              .close:hover,
+              .close:focus {
+                color: #000;
+              }
+
+              .header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+              }
+
+
+              .user-item {
+                display: flex;
+                align-items: center;
+                margin-bottom: 20px;
+              }
+
+              .user-item img {
+                width: 50px;
+                height: 50px;
+                object-fit: cover;
+                border-radius: 50%;
+                margin-right: 10px;
+              }
+
+              .user-item a {
+                font-size: 12px;
+                font-weight: 500;
+                color: white;
+                text-decoration: none;
+                transition: color 0.2s ease-in-out;
+              }
+
+              .user-item a:hover {
+                color: #999;
+              }
+            </style>
+
+          </div>
+          <div class="profile__about">
+            <h3>About</h3>
+            <p>
+              {{ user.bio }}
+            </p>
+          </div>
+        </div>
+
+        <div class="roomList__header">
+          <div>
+            <h2>Study Rooms Hosted by {{ user.username }}</a>
+            </h2>
+          </div>
+        </div>
+        {% include 'base/feed_component.html' %}
+      </div>
+      <!-- Room List End -->
+
+      <!-- Activities Start -->
+      {% include 'base/activity_component.html' %}
+      <!-- Activities End -->
+    </div>
+  </main>
+{% endblock content %}

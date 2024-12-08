@@ -1,0 +1,292 @@
+{% load static %}
+<header class="header header--loggedIn">
+    <div class="container">
+      <a href="{% url 'home' %}" class="header__logo">
+        <img src="{% static 'images/coding2.png' %}" />
+        <h1>Palaver</h1>
+      </a>
+
+      <form class="header__search" method="GET" action="{% url 'home' %}">
+        <label>
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+            <title>search</title>
+            <path
+              d="M32 30.586l-10.845-10.845c1.771-2.092 2.845-4.791 2.845-7.741 0-6.617-5.383-12-12-12s-12 5.383-12 12c0 6.617 5.383 12 12 12 2.949 0 5.649-1.074 7.741-2.845l10.845 10.845 1.414-1.414zM12 22c-5.514 0-10-4.486-10-10s4.486-10 10-10c5.514 0 10 4.486 10 10s-4.486 10-10 10z"
+            ></path>
+          </svg>
+          <input type="text" name="q" placeholder="Search Rooms..." />
+        </label>
+      </form>
+      <nav class="header__menu">
+        {% if request.user.is_authenticated %}
+            <div class="header__user">
+              <style>
+                .notification-icon .badge {
+                  position: absolute;
+                  top: -10px;
+                  right: -10px;
+                  padding: 3px 8px;
+                  border-radius: 50%;
+                  background: #71c6dd;
+                  color: white;
+                }
+                .notification-dropdown {
+                  width: 200px;
+                }
+
+                .notification-dropdown {
+                  position: absolute;
+                  top: 60px;
+                  right: 0;
+                  z-index: 1000;
+                  width: 300px;
+                  background-color: rgb(45, 42, 42);
+                  border-radius: 5px;
+                  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                  padding: 10px;
+                  display: none;
+                }
+                
+                .notification-dropdown li {
+                  list-style: none;
+                  padding: 10px;
+                  border-bottom: 1px solid #eee;
+                }
+                
+                .notification-dropdown li:last-child {
+                  border-bottom: none;
+                }
+                
+                .notification-item {
+                  display: flex;
+                  align-items: center;
+                }
+                
+                .notification-icon {
+                  width: 40px;
+                  height: 40px;
+                  border-radius: 50%;
+                  background-color: #eee;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  margin-right: 10px;
+                }
+                
+                .message-icon svg,
+                .follower-icon svg,
+                .comment-icon svg {
+                  width: 20px;
+                  height: 20px;
+                  fill: #fff;
+                }
+                
+                .message-icon {
+                  background-color: #24a0ed;
+                }
+                
+                .follower-icon {
+                  background-color: #2ecc71;
+                }
+                
+                .comment-icon {
+                  background-color: #e67e22;
+                }
+                
+                .notification-content {
+                  flex: 1;
+                }
+                
+                .notification-title {
+                  font-weight: bold;
+                  margin-bottom: 5px;
+                }
+                
+                .notification-date {
+                  font-size: 12px;
+                  color: #aaa;
+                  margin: 0;
+                }
+                
+                .notification-remove {
+                  background: none;
+                  border: none;
+                  cursor: pointer;
+                  margin-left: 5px;
+                }
+                
+                .notification-remove svg {
+                  width: 16px;
+                  height: 16px;
+                  fill: #aaa;
+                }
+                
+                .notification-remove:hover svg {
+                  fill: #e74c3c;
+                }
+
+
+
+
+                .dropdown-button2 {
+                  background-color: transparent;
+                  border: none;
+                  cursor: pointer;
+                }
+                
+                .dropdown-button2:focus {
+                  outline: none;
+                }
+                
+                .notification-dropdown {
+                  position: absolute;
+                  top: 60px;
+                  right: 0;
+                  z-index: 1000;
+                  width: 300px;
+                  background-color: rgb(45, 42, 42);
+                  border-radius: 5px;
+                  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                  padding: 10px;
+                  display: none;
+                }
+                
+                .dropdown-button2:focus + .notification-dropdown {
+                  display: block;
+                }
+
+                .dropdown-button {
+                  position: relative;
+                  display: inline-block;
+                  background-color: transparent;
+                  border: none;
+                  cursor: pointer;
+                }
+                
+                .dropdown-button:hover {
+                  opacity: 0.8;
+                }
+                
+                .badge {
+                  position: absolute !important;
+                  top: -15px !important;
+                  right: -15px !important;
+                  background-color: #4ba3bc !important;
+                  color: #fff !important;
+                  font-size: 12px !important;
+                  font-weight: bold !important;
+                  padding: 4px 8px !important;
+                  border-radius: 50% !important;
+                }
+                
+                .fa-bell {
+                  font-size: 28px !important;
+                  color: #4ba3bc !important;
+                }
+              </style>
+
+              <div class="notification-icon" style="position:relative;">
+                <button class="dropdown-button">
+                  <span class="badge">{{ notifications.count }}</span>
+                  <i class="fa fa-bell"></i>
+                </button>
+                <div class="dropdown-menu notification-dropdown">
+                  <h3>Notifications</h3>
+                  <ul>
+                    {% if notifications %}
+                    {% for notification in notifications %}
+                        <li>
+                          <div class="notification-item">         
+                            {% if notification.notificationType == 'follow' %}
+                              <div class="avatar avatar--medium active notification-icon message-icon">
+                                <img src="{{ notification.fromUser.avatar.url }}" />
+                              </div>
+                            {% else %}
+                              <div class="notification-icon message-icon">
+                                <i class="fa-solid fa-user" style="color:white; font-size:20px"></i>
+                              </div>
+                            {% endif %}
+
+                            <div class="notification-content">
+                              <a href="{{ notification.link }}" style="padding: 0px !important;">
+                                <p class="notification-title">{{ notification.title }}</p>
+                              </a>
+                              <p class="notification-date">{{ notification.created|timesince }} ago</p>
+                            </div>
+                            <a href="{% url 'delete_notification' notification.id %}" style="padding: 10px !important;">
+                              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                                <title>delete</title>
+                                <path
+                                  d="M15 2.5h-10c-0.828 0-1.5 0.672-1.5 1.5v1h13v-1c0-0.828-0.672-1.5-1.5-1.5zM16.5 5.5h-13.5v13c0 0.828 0.672 1.5 1.5 1.5h10c0.828 0 1.5-0.672 1.5-1.5v-13.5zM7.5 14l-1.5-1.5 2.25-2.25-2.25-2.25 1.5-1.5 2.25 2.25 2.25-2.25 1.5 1.5-2.25 2.25 2.25 2.25-1.5 1.5-2.25-2.25-2.25 2.25z"
+                                ></path>
+                              </svg>
+                            </a>
+                          </div>
+                        </li>
+                    {% endfor %}
+                    {% else %}
+                    There are no notifications
+                    {% endif %}
+
+                  </ul>
+                </div>
+              </div>
+
+
+                <a href="{% url 'user-profile' request.user.id %}">
+                  {% if online_status %}
+                  <div class="avatar avatar--medium active">
+                  {% else %}
+                  <div class="avatar avatar--medium">
+                  {% endif %}
+                    <img src="{{ request.user.avatar.url }}" />
+                  </div>
+                  <p>{{ request.user.username }} <span>@{{ request.user }}</span></p>
+                </a>
+                <!-- <button class="dropdown-button">
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                    <title>chevron-down</title>
+                    <path d="M16 21l-13-13h-3l16 16 16-16h-3l-13 13z"></path>
+                  </svg>
+                </button> -->
+              </div>
+              <a href="{% url 'game' %}" class="header__bookmark">
+                <i class="fa fa-play"></i> <span>Play Now</span>
+              </a>
+              <a href="{% url 'logout' %}" class="dropdown-button"><i class="fa fa-sign-out" aria-hidden="true">Logout</i></a>
+                <style>
+                  .dropdown-button {
+                    color: #fff !important;
+                  }
+                </style>
+              <style>
+                .header__menu {
+                  display: flex;
+                  justify-content: space-between;
+                }
+                
+                .header__bookmark {
+                  display: flex;
+                  align-items: center;
+                  color: #fff;
+                  background-color: #333;
+                  padding: 10px 20px;
+                  margin-left: 15px;
+                  margin-right: 15px;
+                  border: 2px solid #000;
+                }
+
+                .header__bookmark:hover {
+                  background-color: #000;
+                  border-color: #fff;
+                }
+              </style>
+        {% else %}
+            <a href="{% url 'login' %}">
+                <img src="{% static 'images/avatar.svg' %}" />
+                <p>Login</p>
+              </a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>

@@ -1,0 +1,170 @@
+{% extends 'main.html' %}
+
+
+{% block content %}
+
+
+<style>
+  
+    .container2 {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .col2{
+        display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  
+    .card2 {
+      background-color: #2b2b2b;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+      color: #fff;
+      margin-left: 50px;
+      margin-right: 50px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      width: 300px;
+    }
+  
+    .card2:hover {
+      box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.4);
+    }
+  
+    .card-img-top2 {
+      border-radius: 10px 10px 0 0;
+    }
+  
+    .card-body2 {
+      padding: 20px;
+    }
+  
+    .card-title2 {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-align: center;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+  
+    .card-text2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+  
+    .btn-primary2 {
+      background-color: #ff4500;
+      border-color: #ff4500;
+      color: #fff;
+    }
+  
+    .btn-primary2:hover {
+      background-color: #ff5722;
+      border-color: #ff5722;
+      color: #fff;
+    }
+  
+    .row2 {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+  
+    .col2 {
+      flex-basis: calc(33.33% - 40px);
+    }
+  
+    @media (max-width: 768px) {
+      .col2 {
+        flex-basis: calc(50% - 40px);
+      }
+    }
+  
+    @media (max-width: 576px) {
+      .col2 {
+        flex-basis: calc(100% - 40px);
+      }
+    }
+  
+  </style>
+  
+  <!-- Create a select a game option in a paragraph and some engaging visualization -->
+  <div class="containerGame">
+    <div class="row">
+      <div class="col">
+        <h1 class="text-center color-change">Game Center</h1>
+        <p class="text-center">Select a game to play</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Style the above container -->
+  <style>
+    .containerGame {
+      padding: 20px;
+      border-radius: 8px;
+    }
+  
+    .row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  
+    .col {
+      text-align: center;
+    }
+  
+    .text-center {
+      text-align: center;
+      font-size: 20px;
+    }
+  
+    .color-change {
+      animation: changeColor 4s linear infinite;
+    }
+  
+    @keyframes changeColor {
+      0% {
+        color: #3366cc;
+      }
+      50% {
+        color: #ff6347;
+      }
+      100% {
+        color: #3366cc;
+      }
+    }
+  </style>
+
+
+
+  <div class="container2">  
+    <div class="row2">
+        {% for game in games %}
+      <div class="col2">
+        <div class="card2">
+          <img class="card-img-top2" src="{{ game.image.url }}" alt="Card image">
+          <div class="card-body2">
+            <h4 class="card-title2">{{ game.name }}</h4>
+            <p class="card-text2">{{ game.description }}</p>
+            <center>
+                <a href="{% url 'startGame' game.id %}" class="btn btn-primary2">Explore</a>
+            </center>
+            
+          </div>
+        </div>
+      </div>
+        {% endfor %}
+    </div>
+    </div>
+
+
+
+{% endblock content %} 
