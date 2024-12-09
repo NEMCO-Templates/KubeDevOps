@@ -23,5 +23,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Expose the port that the Django app runs on (8000)
 EXPOSE 8000
 
+# Copy Prometheus configuration file
+COPY prometheus.yml /etc/prometheus/prometheus.yml
+
 # Command to run the application
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "studyPlat.wsgi:application"]

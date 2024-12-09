@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 urlpatterns = [
@@ -28,4 +28,6 @@ urlpatterns = [
     path('up_vote/<str:pk>', views.up_vote_room, name='up_vote'),
     path('down_vote/<str:pk>', views.down_vote_room, name='down_vote'),
     #######################################################################################
+    
+    path('', include('django_prometheus.urls')),
 ]

@@ -40,17 +40,16 @@ INSTALLED_APPS = [
     
     'base.apps.BaseConfig',
     'rest_framework',
-    "corsheaders",
     "debug_toolbar",
+    "django_prometheus",
 ]
 
 AUTH_USER_MODEL = 'base.User'
 
 MIDDLEWARE = [
+    'django_prometheus.middleware.PrometheusBeforeMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    
-    "corsheaders.middleware.CorsMiddleware",
     
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -59,6 +58,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
+    'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
 
 

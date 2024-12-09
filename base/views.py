@@ -9,6 +9,8 @@ from .forms import RoomForm, UserForm, MyUserCreationForm
 from .serializers import *
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+from django.http import HttpResponse
 
 # rooms = [
 #     {'id':1, 'name':'Lets learn python!'},
@@ -17,7 +19,9 @@ from rest_framework.response import Response
 # ]
 
 
-
+def metrics(request):
+    metrics_data = generate_latest()
+    return HttpResponse(metrics_data, content_type=CONTENT_TYPE_LATEST)
 
 def loginPage(request):
     
