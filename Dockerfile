@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Expose the port that the Django app runs on (8000)
+# Expose the port that the Django app runs on
 EXPOSE 8000
 
 # Copy Prometheus configuration file
