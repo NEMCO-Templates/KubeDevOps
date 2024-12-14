@@ -1,0 +1,64 @@
+- hosts: all
+  become: true
+  tasks:
+    - name: Ensure Deployment.yml file is absent
+      ansible.builtin.file:
+        path: /home/ubuntu/Deployment.yml
+        state: absent
+      ignore_errors: yes  # Ignore errors if the file is not found
+
+    - name: Ensure Service.yml file is absent
+      ansible.builtin.file:
+        path: /home/ubuntu/Service.yml
+        state: absent
+      ignore_errors: yes  # Ignore errors if the file is not found
+
+    - block:
+        - name: Copy Deployment.yml to the k8s server
+          ansible.builtin.copy:
+            src: /path/to/your/local/Deployment.yml
+            dest: /home/ubuntu/Deployment.yml
+            owner: ubuntu
+            group: ubuntu
+            mode: '0644'
+          when: ansible_facts['os_family'] == 'Debian'
+
+        - name: Copy Service.yml to the k8s server
+          ansible.builtin.copy:
+            src: /path/to/your/local/Service.yml
+            dest: /home/ubuntu/Service.yml
+            owner: ubuntu
+            group: ubuntu
+            mode: '0644'
+          when: ansible_facts['os_family'] == 'Debian'
+      name: Copy configuration files to the server
+
+    - name: Set KUBECONFIG environment variable
+      ansible.builtin.set_fact:
+        KUBECONFIG: "/home/ubuntu/.kube/config"
+
+    - name: Delete old deployment if exists
+      k8s:
+        kubeconfig: "{{ KUBECONFIG }}"
+        state: absent
+        definition: "{{ lookup('file', '/home/ubuntu/Deployment.yml') }}"
+      ignore_errors: yes  # This will handle cases where the deployment does not exist
+
+    - name: Delete old service if exists
+      k8s:
+        kubeconfig: "{{ KUBECONFIG }}"
+        state: absent
+        definition: "{{ lookup('file', '/home/ubuntu/Service.yml') }}"
+      ignore_errors: yes  # This will handle cases where the service does not exist
+
+    - name: Create new deployment
+      k8s:
+        kubeconfig: "{{ KUBECONFIG }}"
+        state: present
+        definition: "{{ lookup('file', '/home/ubuntu/Deployment.yml') }}"
+
+    - name: Create new service
+      k8s:
+        kubeconfig: "{{ KUBECONFIG }}"
+        state: present
+        definition: "{{ lookup('file', '/home/ubuntu/Service.yml') }}"
